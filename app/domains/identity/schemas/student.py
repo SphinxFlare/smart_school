@@ -1,39 +1,48 @@
 # identity/schemas/student.py
 
 
-from pydantic import BaseModel, Field
-from typing import List, Optional, TYPE_CHECKING
+from pydantic import Field
+from typing import Optional
 from uuid import UUID
-from datetime import datetime
-from .base import DomainBase, TimestampSchema
+from datetime import date
 
-if TYPE_CHECKING:
-    from .user import UserReference
-    from .parent import ParentWithRelationship, ParentReference
-    from .class_section import ClassSectionReference
-else:
-    UserReference = "UserReference"
-    ParentWithRelationship = "ParentWithRelationship"
-    ClassSectionReference = "ClassSectionReference"
+from .base import DomainBase, TimestampSchema
+from .class_section import ClassSectionReference
+
+
+# ---------------------------------------------------------------------
+# Base
+# ---------------------------------------------------------------------
 
 class StudentBase(DomainBase):
     admission_number: str = Field(..., max_length=20)
-    date_of_birth: datetime
+    date_of_birth: date
     blood_group: Optional[str] = Field(None, max_length=10)
     emergency_contact_name: str
     emergency_contact_phone: str
+
+
+# ---------------------------------------------------------------------
+# Create / Update
+# ---------------------------------------------------------------------
 
 class StudentCreate(StudentBase):
     user_id: UUID
     class_id: UUID
     section_id: UUID
 
-class StudentUpdate(BaseModel):
+
+class StudentUpdate(DomainBase):
     blood_group: Optional[str] = None
     emergency_contact_name: Optional[str] = None
     emergency_contact_phone: Optional[str] = None
     class_id: Optional[UUID] = None
     section_id: Optional[UUID] = None
+
+
+# ---------------------------------------------------------------------
+# Response (LEAN)
+# ---------------------------------------------------------------------
 
 class StudentResponse(StudentBase, TimestampSchema):
     id: UUID
@@ -41,21 +50,16 @@ class StudentResponse(StudentBase, TimestampSchema):
     class_id: UUID
     section_id: UUID
     is_deleted: bool
-    user: UserReference
-    class_section: ClassSectionReference
-    parent: List[ParentWithRelationship] = []
+    class_section: Optional[ClassSectionReference] = None
 
-class StudentReference(BaseModel):
+
+# ---------------------------------------------------------------------
+# Reference (used across domain)
+# ---------------------------------------------------------------------
+
+class StudentReference(DomainBase):
     id: UUID
     admission_number: str
     full_name: str
     class_name: str
     section_name: str
-
-class ParentWithRelationship(BaseModel):
-    parent: "ParentReference"  # Forward reference
-    relationship: str
-    is_primary: bool
-
-StudentResponse.model_rebuild()
-ParentWithRelationship.model_rebuild()

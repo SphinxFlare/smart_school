@@ -47,6 +47,31 @@ class RoleRepository(SchoolScopedRepository[Role]):
         )
         result = db.execute(stmt)
         return result.scalar_one_or_none()
+    
+
+    def get_roles_by_ids(
+        self,
+        db: Session,
+        school_id: UUID,
+        role_ids: List[UUID]
+    ) -> List[Role]:
+        """
+        Retrieve roles by IDs scoped to school.
+        Empty-list guard included.
+        """
+        if not role_ids:
+            return []
+
+        stmt = (
+            select(self.model)
+            .where(
+                self.model.school_id == school_id,
+                self.model.id.in_(role_ids)
+            )
+        )
+
+        result = db.execute(stmt)
+        return list(result.scalars().all())
 
     # -----------------------------------------
     # Composite Uniqueness Lookups

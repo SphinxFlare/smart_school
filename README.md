@@ -241,27 +241,3 @@ A modular, event-driven, domain-structured school governance platform designed f
 
 **Smart School System**  
 Designed for clarity, governance, and long-term scalability.
-
-
-welfare/
-└── repositories/
-    ├── wellness/
-    │   ├── student_observation_repository.py
-    │   └── wellness_check_repository.py
-    │
-    ├── meetings/
-    │   ├── meeting_repository.py
-    │   ├── meeting_participant_repository.py
-    │   ├── meeting_agenda_repository.py
-    │   ├── meeting_outcome_repository.py
-    │   └── meeting_attendance_repository.py
-    │
-    ├── concerns/
-    │   ├── concern_repository.py
-    │   ├── concern_assignment_repository.py
-    │   ├── concern_comment_repository.py
-    │   ├── concern_history_repository.py
-    │   └── escalation_repository.py
-    │
-    └── aggregate/
-        └── welfare_aggregate_repository.py
